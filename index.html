@@ -2315,33 +2315,48 @@
 
       /* ==================== LOGIN ==================== */
       function attemptLogin(showError) {
-        var u = document.getElementById('username').value.trim();
-        var p = document.getElementById('password').value.trim();
-        var err = document.getElementById('login-error');
-        if (u !== 'y244' || p !== 'y4445') {
-          if (showError !== false) {
-            err.textContent = currentLang === 'ar' ? 'بيانات الدخول غير صحيحة' : (currentLang === 'fa' ? 'اطلاعات ورود نامعتبر است' : 'Invalid credentials');
-            err.style.display = 'block'; err.style.animation = 'none'; void err.offsetWidth; err.style.animation = 'shakeError 0.5s ease';
-          }
-          return false;
-        }
-        if (!allChecked()) {
-          if (showError !== false) {
-            err.textContent = currentLang === 'ar' ? 'يجب الموافقة على جميع الشروط' : (currentLang === 'fa' ? 'لطفاً همه شرایط را بپذیرید' : 'Please accept all terms');
-            err.style.display = 'block';
-          }
-          return false;
-        }
-        err.style.display = 'none';
-        setLoggedIn(true);
-        loginScreen.classList.add('hidden');
-        mainScreen.classList.add('active');
-        mainScreen.style.display = 'flex';
-        applyProfileName();
-        showAdblockToast();
-        checkPWAInstallable();
-        return true;
-      }
+  var u = document.getElementById('username').value.trim();
+  var p = document.getElementById('password').value.trim();
+  var err = document.getElementById('login-error');
+
+  // ============ قائمة الحسابات المسموحة ============
+  var allowedUsers = [
+    { username: 'y244', password: 'y4445' },
+    { username: 'admin', password: 'admin123' },
+    { username: 'user2', password: 'pass2' },
+    { username: 'guest', password: 'guest123' }
+    // أضف المزيد هنا...
+  ];
+  // ===============================================
+
+  var isValid = allowedUsers.some(function(acc) {
+    return acc.username === u && acc.password === p;
+  });
+
+  if (!isValid) {
+    if (showError !== false) {
+      err.textContent = currentLang === 'ar' ? 'بيانات الدخول غير صحيحة' : (currentLang === 'fa' ? 'اطلاعات ورود نامعتبر است' : 'Invalid credentials');
+      err.style.display = 'block'; err.style.animation = 'none'; void err.offsetWidth; err.style.animation = 'shakeError 0.5s ease';
+    }
+    return false;
+  }
+  if (!allChecked()) {
+    if (showError !== false) {
+      err.textContent = currentLang === 'ar' ? 'يجب الموافقة على جميع الشروط' : (currentLang === 'fa' ? 'لطفاً همه شرایط را بپذیرید' : 'Please accept all terms');
+      err.style.display = 'block';
+    }
+    return false;
+  }
+  err.style.display = 'none';
+  setLoggedIn(true);
+  loginScreen.classList.add('hidden');
+  mainScreen.classList.add('active');
+  mainScreen.style.display = 'flex';
+  applyProfileName();
+  showAdblockToast();
+  checkPWAInstallable();
+  return true;
+}
 
       document.getElementById('login-btn').addEventListener('click', function() { attemptLogin(true); });
       document.getElementById('password').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('login-btn').click(); });
